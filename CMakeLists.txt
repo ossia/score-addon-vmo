@@ -3,6 +3,8 @@ project(score_addon_vmo LANGUAGES CXX)
 # General initialization
 score_common_setup()
 
+set(PYBIND11_PYTHON_VERSION 2.7 CACHE INTERNAL "")
+add_subdirectory(${OSSIA_3RDPARTY_FOLDER}/pybind11 pybind11)
 # Source files
 set(HDRS
     vmo/Executor.hpp
@@ -36,7 +38,11 @@ add_library(${PROJECT_NAME} ${SRCS} ${HDRS})
 score_generate_command_list_file(${PROJECT_NAME} "${HDRS}")
 
 # Link
-target_link_libraries(${PROJECT_NAME} PUBLIC score_plugin_engine)
+target_link_libraries(${PROJECT_NAME} PUBLIC score_plugin_engine pybind11::embed)
 
 # Target-specific options
 setup_score_plugin(${PROJECT_NAME})
+
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/vmo")
+  file(COPY 3rdparty/vmo/vmo DESTINATION ${CMAKE_BINARY_DIR})
+endif()
