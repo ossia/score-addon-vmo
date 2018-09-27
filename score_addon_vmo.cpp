@@ -9,13 +9,18 @@
 #include <vmo/LocalTree.hpp>
 #include <vmo/Process.hpp>
 #include <score_addon_vmo_commands_files.hpp>
+#include <dlfcn.h>
 
+static void* vmo_dll{};
 score_addon_vmo::score_addon_vmo()
 {
+  vmo_dll = dlopen("libpython2.7.so", RTLD_LAZY |  RTLD_GLOBAL);
 }
 
 score_addon_vmo::~score_addon_vmo()
 {
+  if(vmo_dll)
+    dlclose(vmo_dll);
 }
 
 std::vector<std::unique_ptr<score::InterfaceBase>>
