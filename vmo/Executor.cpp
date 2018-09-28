@@ -45,11 +45,11 @@ class node final : public ossia::nonowning_graph_node
   ossia::inlet sequence_length{ossia::value_port{}};
   ossia::outlet output{ossia::value_port{}};
 
-  bool m_is_active{};
-
   std::vector<ossia::value> input_sequence;
-  std::vector<ossia::value> output_sequence;
+  std::vector<int> output_sequence;
   std::size_t sequence_idx{};
+  int32_t m_sequence_length{16};
+
 public:
   node()
   {
@@ -72,6 +72,7 @@ public:
       auto& i = *input.data.target<ossia::value_port>();
       auto& r = *regen.data.target<ossia::value_port>();
       auto& b = *bang.data.target<ossia::value_port>();
+      auto& sl = *sequence_length.data.target<ossia::value_port>();
       auto& o = *output.data.target<ossia::value_port>();
 
       for(const auto& v : i.get_data())
@@ -79,11 +80,18 @@ public:
         input_sequence.push_back(v.value);
       }
 
+      for(const auto& v : sl.get_data())
+      {
+        if(auto i = v.value.target<int32_t>())
+          m_sequence_length = ossia::clamp(*i, 0, 10000);
+      }
+
       if (!r.get_data().empty())
       {
         // Create a dictionary from the received values
         ossia::fast_hash_map<ossia::value, int> v;
-        int max = 0;
+        // VMO fails if alphabet starts at 0
+        int max = 1;
         std::vector<int> seq;
         for(auto& val : input_sequence)
         {
@@ -101,35 +109,27 @@ public:
 
         // Create a python oracle
         using namespace py::literals;
+        auto p = oracle().attr("build_oracle")(seq, "a", 0.01);
 
+        py::list res = generate().attr("improvise")(p, m_sequence_length);
+
+        output_sequence.clear();
+        for(auto item : res)
         {
-          auto locals = py::dict("seq"_a=seq);
-          py::exec("print(seq)", py::globals(), locals);
+          output_sequence.push_back(item.cast<int>()-1);
         }
-        auto p = oracle().attr("build_oracle")(seq, "a");
 
-        auto res = generate().attr("improvise")(p, 5);
-        auto locals = py::dict("res"_a=res);
-        py::exec(R"_(
-import sys
-print(res)
-sys.stdout.flush())_", py::globals(), locals);
-        //self.sequence = self.oracle.make_rand_sequence(0.4, seq_len);
-
-        // Create a sequence in the oracle
+        sequence_idx = 0;
       }
 
-                           /*
-          std::vector<int> seq = {0,1,1,2,0,1,2,3,0,1,2};//"a", "b" , "b", "c", "a", "b", "c", "d", "a", "b", "c" };
-
-          auto p = oracle().attr("build_oracle")(seq, "f");
-          auto locals = py::dict("p"_a=p);
-          py::exec(R"_(
-                   print(str([0, 0, 0, 1, 0, 1, 2, 2, 0, 1, 2, 3]) + " == " + str(p.lrs))
-                   print(str([None, 0, 0, 2, 0, 1, 2, 4, 0, 1, 2, 7]) + " == " + str(p.sfx))
-                   )_", py::globals(), locals);
-                                      */
-
+      if (!b.get_data().empty())
+      {
+        if(sequence_idx < output_sequence.size())
+        {
+          o.write_value(input_sequence[output_sequence[sequence_idx]], tk.offset);
+        }
+        sequence_idx = (sequence_idx + 1) % output_sequence.size();
+      }
     }
     catch(std::exception& e)
     {
@@ -139,7 +139,7 @@ sys.stdout.flush())_", py::globals(), locals);
 
   std::string label() const noexcept override
   {
-    return "vmo";
+    return "VMO";
   }
 
 private:
@@ -161,18 +161,5 @@ ProcessExecutorComponent::ProcessExecutorComponent(
   {
     std::cerr << e.what() << std::endl;
   }
-
-  /** Don't forget that the node executes in another thread.
-   * -> handle live updates with the in_exec function, e.g. :
-   *
-   * connect(&element.metadata(), &score::ModelMetadata::ColorChanged,
-   *         this, [=] (const QColor& c) {
-   *
-   *   in_exec([c,n=std::dynamic_pointer_cast<vmo::node>(this->node)] {
-   *     n->set_color(c);
-   *   });
-   *
-   * });
-   */
 }
 }
