@@ -19,17 +19,9 @@ public:
       const TimeVal& duration, const Id<Process::ProcessModel>& id,
       QObject* parent);
 
-  template <typename Impl>
-  Model(Impl& vis, QObject* parent)
-    : Process::ProcessModel{vis, parent}
-    , input{vis, this}
-    , regen{vis, this}
-    , bang{vis, this}
-    , sequence_length{vis, this}
-    , output{vis, this}
-  {
-    vis.writeTo(*this);
-  }
+  Model(DataStreamWriter& vis, QObject* parent);
+  Model(JSONObjectWriter& vis, QObject* parent);
+
 
   ~Model() override;
 

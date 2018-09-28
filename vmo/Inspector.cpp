@@ -14,8 +14,6 @@ InspectorWidget::InspectorWidget(
     : InspectorWidgetDelegate_T{object, parent}
     , m_dispatcher{context.commandStack}
 {
-  auto lay = new QFormLayout{this};
-  lay->addWidget(new QLabel("change me"));
 }
 
 InspectorWidget::~InspectorWidget()

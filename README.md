@@ -1,7 +1,12 @@
 # score-addon-vmo
 
-Provide the VMO audio improvisation algorithm
+Provide the VMO improvisation algorithm
 
+To set up : 
+- Install Python 2.7
+- Install VMO's required packages (see the VMO readme)
+- Clone this repository (`git clone --recursive`) in the addons folder of score
+- Rebuild score.
 
 # Patches & fixes required:
 
