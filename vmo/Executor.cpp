@@ -50,6 +50,9 @@ class node final : public ossia::nonowning_graph_node
   std::size_t sequence_idx{};
   int32_t m_sequence_length{16};
 
+
+  ossia::fast_hash_map<ossia::value, int> m_value_cache;
+  std::vector<int> m_sequence_cache;
 public:
   node()
   {
@@ -89,27 +92,27 @@ public:
       if (!r.get_data().empty())
       {
         // Create a dictionary from the received values
-        ossia::fast_hash_map<ossia::value, int> v;
+        m_value_cache.clear();
         // VMO fails if alphabet starts at 0
         int max = 1;
-        std::vector<int> seq;
+        m_sequence_cache.clear();
         for(auto& val : input_sequence)
         {
-          if(auto it = v.find(val); it != v.end())
+          if(auto it = m_value_cache.find(val); it != m_value_cache.end())
           {
-            seq.push_back(it->second);
+            m_sequence_cache.push_back(it->second);
           }
           else
           {
-            v.insert({val, max});
-            seq.push_back(max);
+            m_value_cache.insert({val, max});
+            m_sequence_cache.push_back(max);
             max++;
           }
         }
 
         // Create a python oracle
         using namespace py::literals;
-        auto p = oracle().attr("build_oracle")(seq, "a", 0.01);
+        auto p = oracle().attr("build_oracle")(m_sequence_cache, "a", 0.01);
 
         py::list res = generate().attr("improvise")(p, m_sequence_length);
 
@@ -141,8 +144,6 @@ public:
   {
     return "VMO";
   }
-
-private:
 };
 
 ProcessExecutorComponent::ProcessExecutorComponent(
