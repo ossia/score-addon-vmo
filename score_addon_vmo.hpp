@@ -2,7 +2,7 @@
 #include <score/application/ApplicationContext.hpp>
 #include <score/command/Command.hpp>
 #include <score/command/CommandGeneratorMap.hpp>
-#include <score/plugins/customfactory/FactoryFamily.hpp>
+#include <score/plugins/InterfaceList.hpp>
 #include <score/plugins/qt_interfaces/CommandFactory_QtInterface.hpp>
 #include <score/plugins/qt_interfaces/FactoryFamily_QtInterface.hpp>
 #include <score/plugins/qt_interfaces/FactoryInterface_QtInterface.hpp>
@@ -15,8 +15,8 @@
 #include <vector>
 
 class score_addon_vmo final : public score::Plugin_QtInterface,
-                                   public score::FactoryInterface_QtInterface,
-                                   public score::CommandFactory_QtInterface
+                              public score::FactoryInterface_QtInterface,
+                              public score::CommandFactory_QtInterface
 {
   SCORE_PLUGIN_METADATA(1, "1a496965-5b44-4d80-9ba1-1136adc20f12")
 

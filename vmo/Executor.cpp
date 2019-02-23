@@ -11,8 +11,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #pragma GCC diagnostic pop
-#include <ossia/network/value/value_hash.hpp>
 #include <ossia/detail/hash_map.hpp>
+#include <ossia/network/value/value_hash.hpp>
 namespace py = pybind11;
 
 namespace vmo
@@ -50,9 +50,9 @@ class node final : public ossia::nonowning_graph_node
   std::size_t sequence_idx{};
   int32_t m_sequence_length{16};
 
-
   ossia::fast_hash_map<ossia::value, int> m_value_cache;
   std::vector<int> m_sequence_cache;
+
 public:
   node()
   {
@@ -78,14 +78,14 @@ public:
       auto& sl = *sequence_length.data.target<ossia::value_port>();
       auto& o = *output.data.target<ossia::value_port>();
 
-      for(const auto& v : i.get_data())
+      for (const auto& v : i.get_data())
       {
         input_sequence.push_back(v.value);
       }
 
-      for(const auto& v : sl.get_data())
+      for (const auto& v : sl.get_data())
       {
-        if(auto i = v.value.target<int32_t>())
+        if (auto i = v.value.target<int32_t>())
           m_sequence_length = ossia::clamp(*i, 0, 10000);
       }
 
@@ -96,9 +96,9 @@ public:
         // VMO fails if alphabet starts at 0
         int max = 1;
         m_sequence_cache.clear();
-        for(auto& val : input_sequence)
+        for (auto& val : input_sequence)
         {
-          if(auto it = m_value_cache.find(val); it != m_value_cache.end())
+          if (auto it = m_value_cache.find(val); it != m_value_cache.end())
           {
             m_sequence_cache.push_back(it->second);
           }
@@ -117,9 +117,9 @@ public:
         py::list res = generate().attr("improvise")(p, m_sequence_length);
 
         output_sequence.clear();
-        for(auto item : res)
+        for (auto item : res)
         {
-          output_sequence.push_back(item.cast<int>()-1);
+          output_sequence.push_back(item.cast<int>() - 1);
         }
 
         sequence_idx = 0;
@@ -127,28 +127,28 @@ public:
 
       if (!b.get_data().empty())
       {
-        if(sequence_idx < output_sequence.size())
+        if (sequence_idx < output_sequence.size())
         {
-          o.write_value(input_sequence[output_sequence[sequence_idx]], tk.offset);
+          o.write_value(
+              input_sequence[output_sequence[sequence_idx]], tk.offset);
         }
         sequence_idx = (sequence_idx + 1) % output_sequence.size();
       }
     }
-    catch(std::exception& e)
+    catch (std::exception& e)
     {
       std::cerr << e.what() << std::endl;
     }
   }
 
-  std::string label() const noexcept override
-  {
-    return "VMO";
-  }
+  std::string label() const noexcept override { return "VMO"; }
 };
 
 ProcessExecutorComponent::ProcessExecutorComponent(
-    vmo::Model& element, const Execution::Context& ctx,
-    const Id<score::Component>& id, QObject* parent)
+    vmo::Model& element,
+    const Execution::Context& ctx,
+    const Id<score::Component>& id,
+    QObject* parent)
     : ProcessComponent_T{element, ctx, id, "vmoExecutorComponent", parent}
 {
   try
@@ -156,9 +156,8 @@ ProcessExecutorComponent::ProcessExecutorComponent(
     auto n = std::make_shared<vmo::node>();
     this->node = n;
     m_ossia_process = std::make_shared<ossia::node_process>(n);
-
   }
-  catch(std::exception& e)
+  catch (std::exception& e)
   {
     std::cerr << e.what() << std::endl;
   }

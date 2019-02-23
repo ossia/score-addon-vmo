@@ -7,6 +7,6 @@
 
 namespace vmo
 {
-using LayerFactory = Process::LayerFactory_T<
-    vmo::Model, vmo::Presenter, vmo::View>;
+using LayerFactory
+    = Process::LayerFactory_T<vmo::Model, vmo::Presenter, vmo::View>;
 }

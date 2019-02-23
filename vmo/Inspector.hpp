@@ -13,7 +13,8 @@ class InspectorWidget final
 {
 public:
   explicit InspectorWidget(
-      const vmo::Model& object, const score::DocumentContext& context,
+      const vmo::Model& object,
+      const score::DocumentContext& context,
       QWidget* parent);
   ~InspectorWidget() override;
 

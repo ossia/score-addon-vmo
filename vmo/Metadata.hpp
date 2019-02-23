@@ -7,7 +7,9 @@ class Model;
 }
 
 PROCESS_METADATA(
-    , vmo::Model, "fe02e504-964a-479c-a1fb-4e602b777c18",
+    ,
+    vmo::Model,
+    "fe02e504-964a-479c-a1fb-4e602b777c18",
     "vmo",                                           // Internal name
     "Variable Markov Oracle",                        // Pretty name
     Process::ProcessCategory::Other,                 // Category

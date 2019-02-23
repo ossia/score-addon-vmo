@@ -13,8 +13,10 @@ class Presenter final : public Process::LayerPresenter
 {
 public:
   explicit Presenter(
-      const Model& model, View* view,
-      const Process::ProcessPresenterContext& ctx, QObject* parent);
+      const Model& model,
+      View* view,
+      const Process::ProcessPresenterContext& ctx,
+      QObject* parent);
 
   void setWidth(qreal width) override;
   void setHeight(qreal height) override;

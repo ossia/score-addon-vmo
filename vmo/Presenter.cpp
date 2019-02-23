@@ -7,8 +7,10 @@
 namespace vmo
 {
 Presenter::Presenter(
-    const Model& layer, View* view,
-    const Process::ProcessPresenterContext& ctx, QObject* parent)
+    const Model& layer,
+    View* view,
+    const Process::ProcessPresenterContext& ctx,
+    QObject* parent)
     : Process::LayerPresenter{ctx, parent}, m_model{layer}, m_view{view}
 {
 }
@@ -33,13 +35,9 @@ void Presenter::putBehind()
   m_view->setOpacity(0.2);
 }
 
-void Presenter::on_zoomRatioChanged(ZoomRatio)
-{
-}
+void Presenter::on_zoomRatioChanged(ZoomRatio) {}
 
-void Presenter::parentGeometryChanged()
-{
-}
+void Presenter::parentGeometryChanged() {}
 
 const Process::ProcessModel& Presenter::model() const
 {

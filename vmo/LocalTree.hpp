@@ -12,8 +12,10 @@ class LocalTreeProcessComponent : public LocalTree::ProcessComponent_T<Model>
 
 public:
   LocalTreeProcessComponent(
-      const Id<score::Component>& id, ossia::net::node_base& parent,
-      vmo::Model& scenario, LocalTree::DocumentPlugin& doc,
+      const Id<score::Component>& id,
+      ossia::net::node_base& parent,
+      vmo::Model& scenario,
+      LocalTree::DocumentPlugin& doc,
       QObject* parent_obj);
 
   ~LocalTreeProcessComponent() override;

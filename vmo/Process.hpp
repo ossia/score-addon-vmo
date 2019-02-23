@@ -1,10 +1,9 @@
 #pragma once
+#include <Process/Dataflow/Port.hpp>
 #include <Process/GenericProcessFactory.hpp>
 #include <Process/Process.hpp>
 
 #include <vmo/Metadata.hpp>
-
-#include <Process/Dataflow/Port.hpp>
 
 namespace vmo
 {
@@ -16,12 +15,12 @@ class Model final : public Process::ProcessModel
 
 public:
   Model(
-      const TimeVal& duration, const Id<Process::ProcessModel>& id,
+      const TimeVal& duration,
+      const Id<Process::ProcessModel>& id,
       QObject* parent);
 
   Model(DataStreamWriter& vis, QObject* parent);
   Model(JSONObjectWriter& vis, QObject* parent);
-
 
   ~Model() override;
 
@@ -32,7 +31,7 @@ public:
   Process::Outlet output;
 
 private:
-  QString prettyName() const override;
+  QString prettyName() const noexcept override;
 };
 
 using ProcessFactory = Process::ProcessFactory_T<vmo::Model>;

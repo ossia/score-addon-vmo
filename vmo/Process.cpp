@@ -7,7 +7,8 @@ namespace vmo
 {
 
 Model::Model(
-    const TimeVal& duration, const Id<Process::ProcessModel>& id,
+    const TimeVal& duration,
+    const Id<Process::ProcessModel>& id,
     QObject* parent)
     : Process::ProcessModel{duration, id, "vmoProcess", parent}
     , input{Id<Process::Port>(0), this}
@@ -30,12 +31,12 @@ Model::Model(
 }
 
 Model::Model(DataStreamWriter& vis, QObject* parent)
-  : Process::ProcessModel{vis, parent}
-  , input{vis, parent}
-  , regen{vis, parent}
-  , bang{vis, parent}
-  , sequence_length{vis, parent}
-  , output{vis, parent}
+    : Process::ProcessModel{vis, parent}
+    , input{vis, parent}
+    , regen{vis, parent}
+    , bang{vis, parent}
+    , sequence_length{vis, parent}
+    , output{vis, parent}
 {
   vis.writeTo(*this);
   m_inlets.push_back(&input);
@@ -46,12 +47,13 @@ Model::Model(DataStreamWriter& vis, QObject* parent)
 }
 
 Model::Model(JSONObjectWriter& vis, QObject* parent)
-  : Process::ProcessModel{vis, parent}
-  , input{JSONObjectWriter{vis.obj["Input"].toObject()}, parent}
-  , regen{JSONObjectWriter{vis.obj["Regen"].toObject()}, parent}
-  , bang{JSONObjectWriter{vis.obj["Bang"].toObject()}, parent}
-  , sequence_length{JSONObjectWriter{vis.obj["SequenceLength"].toObject()}, parent}
-  , output{JSONObjectWriter{vis.obj["Output"].toObject()}, parent}
+    : Process::ProcessModel{vis, parent}
+    , input{JSONObjectWriter{vis.obj["Input"].toObject()}, parent}
+    , regen{JSONObjectWriter{vis.obj["Regen"].toObject()}, parent}
+    , bang{JSONObjectWriter{vis.obj["Bang"].toObject()}, parent}
+    , sequence_length{JSONObjectWriter{vis.obj["SequenceLength"].toObject()},
+                      parent}
+    , output{JSONObjectWriter{vis.obj["Output"].toObject()}, parent}
 {
   vis.writeTo(*this);
   m_inlets.push_back(&input);
@@ -61,11 +63,9 @@ Model::Model(JSONObjectWriter& vis, QObject* parent)
   m_outlets.push_back(&output);
 }
 
-Model::~Model()
-{
-}
+Model::~Model() {}
 
-QString Model::prettyName() const
+QString Model::prettyName() const noexcept
 {
   return tr("VMO Process");
 }
@@ -74,14 +74,16 @@ QString Model::prettyName() const
 template <>
 void DataStreamReader::read(const vmo::Model& proc)
 {
-  m_stream << proc.input << proc.regen << proc.bang << proc.sequence_length << proc.output;
+  m_stream << proc.input << proc.regen << proc.bang << proc.sequence_length
+           << proc.output;
   insertDelimiter();
 }
 
 template <>
 void DataStreamWriter::write(vmo::Model& proc)
 {
-  m_stream >> proc.input >> proc.regen >> proc.bang >> proc.sequence_length >> proc.output;
+  m_stream >> proc.input >> proc.regen >> proc.bang >> proc.sequence_length
+      >> proc.output;
   checkDelimiter();
 }
 

@@ -1,31 +1,31 @@
 #include "score_addon_vmo.hpp"
 
-#include <score/plugins/customfactory/FactorySetup.hpp>
+#include <score/plugins/FactorySetup.hpp>
 
+#include <dlfcn.h>
+#include <score_addon_vmo_commands_files.hpp>
 #include <vmo/CommandFactory.hpp>
 #include <vmo/Executor.hpp>
 #include <vmo/Inspector.hpp>
 #include <vmo/Layer.hpp>
 #include <vmo/LocalTree.hpp>
 #include <vmo/Process.hpp>
-#include <score_addon_vmo_commands_files.hpp>
-#include <dlfcn.h>
 
 static void* vmo_dll{};
 score_addon_vmo::score_addon_vmo()
 {
-  vmo_dll = dlopen("libpython2.7.so", RTLD_LAZY |  RTLD_GLOBAL);
+  vmo_dll = dlopen("libpython2.7.so", RTLD_LAZY | RTLD_GLOBAL);
 }
 
 score_addon_vmo::~score_addon_vmo()
 {
-  if(vmo_dll)
+  if (vmo_dll)
     dlclose(vmo_dll);
 }
 
-std::vector<std::unique_ptr<score::InterfaceBase>>
-score_addon_vmo::factories(
-    const score::ApplicationContext& ctx, const score::InterfaceKey& key) const
+std::vector<std::unique_ptr<score::InterfaceBase>> score_addon_vmo::factories(
+    const score::ApplicationContext& ctx,
+    const score::InterfaceKey& key) const
 {
   return instantiate_factories<
       score::ApplicationContext,

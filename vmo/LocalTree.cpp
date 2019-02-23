@@ -6,14 +6,19 @@
 namespace vmo
 {
 LocalTreeProcessComponent::LocalTreeProcessComponent(
-    const Id<score::Component>& id, ossia::net::node_base& parent,
-    vmo::Model& proc, LocalTree::DocumentPlugin& sys, QObject* parent_obj)
-    : LocalTree::ProcessComponent_T<vmo::Model>{
-          parent, proc, sys, id, "vmoComponent", parent_obj}
+    const Id<score::Component>& id,
+    ossia::net::node_base& parent,
+    vmo::Model& proc,
+    LocalTree::DocumentPlugin& sys,
+    QObject* parent_obj)
+    : LocalTree::ProcessComponent_T<vmo::Model>{parent,
+                                                proc,
+                                                sys,
+                                                id,
+                                                "vmoComponent",
+                                                parent_obj}
 {
 }
 
-LocalTreeProcessComponent::~LocalTreeProcessComponent()
-{
-}
+LocalTreeProcessComponent::~LocalTreeProcessComponent() {}
 }
