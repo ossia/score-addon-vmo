@@ -24,11 +24,11 @@ public:
 
   ~Model() override;
 
-  Process::Inlet input;
-  Process::Inlet regen;
-  Process::Inlet bang;
-  Process::Inlet sequence_length;
-  Process::Outlet output;
+  Process::ValueInlet input;
+  Process::ValueInlet regen;
+  Process::ValueInlet bang;
+  Process::ValueInlet sequence_length;
+  Process::ValueOutlet output;
 
 private:
   QString prettyName() const noexcept override;

@@ -15,10 +15,10 @@ public:
   explicit Presenter(
       const Model& model,
       View* view,
-      const Process::ProcessPresenterContext& ctx,
+      const Process::Context& ctx,
       QObject* parent);
 
-  void setWidth(qreal width) override;
+  void setWidth(qreal width, qreal defaultWidth) override;
   void setHeight(qreal height) override;
 
   void putToFront() override;
@@ -28,11 +28,7 @@ public:
 
   void parentGeometryChanged() override;
 
-  const Process::ProcessModel& model() const override;
-  const Id<Process::ProcessModel>& modelId() const override;
-
 private:
-  const Model& m_model;
   View* m_view{};
 };
 }

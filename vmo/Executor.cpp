@@ -39,11 +39,11 @@ py::module& generate()
 
 class node final : public ossia::nonowning_graph_node
 {
-  ossia::inlet input{ossia::value_port{}};
-  ossia::inlet regen{ossia::value_port{}};
-  ossia::inlet bang{ossia::value_port{}};
-  ossia::inlet sequence_length{ossia::value_port{}};
-  ossia::outlet output{ossia::value_port{}};
+  ossia::value_inlet input;
+  ossia::value_inlet regen;
+  ossia::value_inlet bang;
+  ossia::value_inlet sequence_length;
+  ossia::value_outlet output;
 
   std::vector<ossia::value> input_sequence;
   std::vector<int> output_sequence;
@@ -56,9 +56,9 @@ class node final : public ossia::nonowning_graph_node
 public:
   node()
   {
-    input.data.target<ossia::value_port>()->is_event = true;
-    regen.data.target<ossia::value_port>()->is_event = true;
-    bang.data.target<ossia::value_port>()->is_event = true;
+    input.target<ossia::value_port>()->is_event = true;
+    regen.target<ossia::value_port>()->is_event = true;
+    bang.target<ossia::value_port>()->is_event = true;
     m_inlets.push_back(&input);
     m_inlets.push_back(&regen);
     m_inlets.push_back(&bang);
@@ -67,16 +67,16 @@ public:
   }
 
   void
-  run(ossia::token_request tk, ossia::exec_state_facade s) noexcept override
+  run(const ossia::token_request& tk, ossia::exec_state_facade s) noexcept override
   {
     interpreter();
     try
     {
-      auto& i = *input.data.target<ossia::value_port>();
-      auto& r = *regen.data.target<ossia::value_port>();
-      auto& b = *bang.data.target<ossia::value_port>();
-      auto& sl = *sequence_length.data.target<ossia::value_port>();
-      auto& o = *output.data.target<ossia::value_port>();
+      auto& i = *input.target<ossia::value_port>();
+      auto& r = *regen.target<ossia::value_port>();
+      auto& b = *bang.target<ossia::value_port>();
+      auto& sl = *sequence_length.target<ossia::value_port>();
+      auto& o = *output.target<ossia::value_port>();
 
       for (const auto& v : i.get_data())
       {
@@ -130,7 +130,7 @@ public:
         if (sequence_idx < output_sequence.size())
         {
           o.write_value(
-              input_sequence[output_sequence[sequence_idx]], tk.offset);
+              input_sequence[output_sequence[sequence_idx]], tk.physical_start(s.modelToSamples()));
         }
         sequence_idx = (sequence_idx + 1) % output_sequence.size();
       }

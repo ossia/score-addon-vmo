@@ -9,11 +9,11 @@ LocalTreeProcessComponent::LocalTreeProcessComponent(
     const Id<score::Component>& id,
     ossia::net::node_base& parent,
     vmo::Model& proc,
-    LocalTree::DocumentPlugin& sys,
+    const score::DocumentContext& doc,
     QObject* parent_obj)
     : LocalTree::ProcessComponent_T<vmo::Model>{parent,
                                                 proc,
-                                                sys,
+                                                doc,
                                                 id,
                                                 "vmoComponent",
                                                 parent_obj}

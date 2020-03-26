@@ -9,13 +9,13 @@ namespace vmo
 Presenter::Presenter(
     const Model& layer,
     View* view,
-    const Process::ProcessPresenterContext& ctx,
+    const Process::Context& ctx,
     QObject* parent)
-    : Process::LayerPresenter{ctx, parent}, m_model{layer}, m_view{view}
+    : Process::LayerPresenter{layer, view, ctx, parent}, m_view{view}
 {
 }
 
-void Presenter::setWidth(qreal val)
+void Presenter::setWidth(qreal val, qreal defaultWidth)
 {
   m_view->setWidth(val);
 }
@@ -39,13 +39,4 @@ void Presenter::on_zoomRatioChanged(ZoomRatio) {}
 
 void Presenter::parentGeometryChanged() {}
 
-const Process::ProcessModel& Presenter::model() const
-{
-  return m_model;
-}
-
-const Id<Process::ProcessModel>& Presenter::modelId() const
-{
-  return m_model.id();
-}
 }
