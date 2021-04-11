@@ -46,14 +46,14 @@ Model::Model(DataStreamWriter& vis, QObject* parent)
   m_outlets.push_back(&output);
 }
 
-Model::Model(JSONObjectWriter& vis, QObject* parent)
+Model::Model(JSONObject::Deserializer& vis, QObject* parent)
     : Process::ProcessModel{vis, parent}
-    , input{JSONObjectWriter{vis.obj["Input"].toObject()}, parent}
-    , regen{JSONObjectWriter{vis.obj["Regen"].toObject()}, parent}
-    , bang{JSONObjectWriter{vis.obj["Bang"].toObject()}, parent}
-    , sequence_length{JSONObjectWriter{vis.obj["SequenceLength"].toObject()},
+    , input{JSONObject::Deserializer{vis.obj["Input"]}, parent}
+    , regen{JSONObject::Deserializer{vis.obj["Regen"]}, parent}
+    , bang{JSONObject::Deserializer{vis.obj["Bang"]}, parent}
+    , sequence_length{JSONObject::Deserializer{vis.obj["SequenceLength"]},
                       parent}
-    , output{JSONObjectWriter{vis.obj["Output"].toObject()}, parent}
+    , output{JSONObject::Deserializer{vis.obj["Output"]}, parent}
 {
   vis.writeTo(*this);
   m_inlets.push_back(&input);
@@ -88,16 +88,16 @@ void DataStreamWriter::write(vmo::Model& proc)
 }
 
 template <>
-void JSONObjectReader::read(const vmo::Model& proc)
+void JSONReader::read(const vmo::Model& proc)
 {
-  obj["Input"] = toJsonObject(proc.input);
-  obj["Regen"] = toJsonObject(proc.regen);
-  obj["Bang"] = toJsonObject(proc.bang);
-  obj["SequenceLength"] = toJsonObject(proc.sequence_length);
-  obj["Output"] = toJsonObject(proc.output);
+  obj["Input"] = proc.input;
+  obj["Regen"] = proc.regen;
+  obj["Bang"] = proc.bang;
+  obj["SequenceLength"] = proc.sequence_length;
+  obj["Output"] = proc.output;
 }
 
 template <>
-void JSONObjectWriter::write(vmo::Model& proc)
+void JSONWriter::write(vmo::Model& proc)
 {
 }

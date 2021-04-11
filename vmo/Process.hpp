@@ -2,6 +2,7 @@
 #include <Process/Dataflow/Port.hpp>
 #include <Process/GenericProcessFactory.hpp>
 #include <Process/Process.hpp>
+#include <score/serialization/JSONVisitor.hpp>
 
 #include <vmo/Metadata.hpp>
 
@@ -19,8 +20,8 @@ public:
       const Id<Process::ProcessModel>& id,
       QObject* parent);
 
-  Model(DataStreamWriter& vis, QObject* parent);
-  Model(JSONObjectWriter& vis, QObject* parent);
+  Model(DataStream::Deserializer& vis, QObject* parent);
+  Model(JSONObject::Deserializer& vis, QObject* parent);
 
   ~Model() override;
 
